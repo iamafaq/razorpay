@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <script type="text/javascript" src="https://checkout.razorpay.com/v1/razorpay.js"></script>
+ <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+ </script>
+
+<script type="text/javascript">
+
+function doPayment(_amount){
+  console.log("somthing happens")
+
+      var xhttp = new XMLHttpRequest(); 
+      xhttp.onreadystatechange = function() {
+        console.log(this)
+        if (this.readyState == 4 && this.status == 200) {
+
+          var response = JSON.parse(this.responseText);
+
+          var options = {
+              "key": "rzp_test_3j6lF9doGAqOSg", 
+              "amount": response["amount"], 
+              "currency": response["currency"],
+              "name": "Afaq Corporation",
+              "description": "A Blue Jeans",
+              "image": "https://s3.ap-southeast-1.amazonaws.com/images.deccanchronicle.com/dc-Cover-u0b349upqugfio195s4lpk8144-20190213120303.Medi.jpeg",
+              "order_id": response["order_id"],
+              "handler": function (response){
+                  console.log("RESPONSE",response)
+          
+                  
+                    capturePaymentFor(response.razorpay_payment_id,_amount)
+                   
+              },
+              "prefill": {
+                  "name": "Afaq Ahmed",
+                  "email": "afaq7105@gmail.com",
+                  "contact": "8660726489"
+              },
+              "notes": {
+                  "address": "Koramangala,Bangalore"
+              },
+              "theme": {
+                  "color": "#F37254"
+              }
+          };
+
+          var rzp1 = new Razorpay(options);
+          rzp1.open();
+
+        }
+      };
+      xhttp.open("POST", "https://api.razorpay.com/v1/orders", true);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      xhttp.setRequestHeader("Authorization", "Basic cnpwX3Rlc3RfM2o2bEY5ZG9HQXFPU2c6MTlraVFXaHlld2FHZ1Y1Q2pCZWxYdUNh");
+
+      var request = {"amount": _amount,
+        "currency": "INR",
+        "receipt": "rcptid_11",
+        "payment_capture": 1
+        }
+      xhttp.send(JSON.stringify(request));
+
+}
+
+</script>
+<script type="text/javascript">
+
+const capturePaymentFor = function capturePaymentFor(payement_id,_amount){
+  console.log("somthing happens")
+      var xhttp = new XMLHttpRequest(); 
+      xhttp.onreadystatechange = function() {
+        console.log(this)
+        if (this.readyState == 4 && this.status == 200) {
+
+          var response = JSON.parse(this.responseText);
+          console.log(response);
+           if(response.status=="captured"){
+            document.getElementById("orderPage").style = "display:none;"
+            document.getElementById("sucPage").style = "display:block;"
+           }else {
+            document.getElementById("orderPage").style = "display:none;"
+            document.getElementById("failPage").style = "display:block;"
+           }
+          // console.log('Status:', response.statusCode);  
+          // console.log('Headers:', JSON.stringify(response.headers)); 
+          // console.log('Response:', body);
+        }
+      };
+      xhttp.open("POST", 'https://rzp_test_3j6lF9doGAqOSg:19kiQWhyewaGgV5CjBelXuCa@api.razorpay.com/v1/payments/'+payement_id+'/capture', true);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      xhttp.setRequestHeader("Authorization", "Basic cnpwX3Rlc3RfM2o2bEY5ZG9HQXFPU2c6MTlraVFXaHlld2FHZ1Y1Q2pCZWxYdUNh");
+
+      var request = {"amount": _amount }
+      xhttp.send(JSON.stringify(request));
+
+    } 
+
+</script>
+
+
+<style>
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+}
+
+.price {
+  color: grey;
+  font-size: 22px;
+}
+
+.card button {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.card button:hover {
+  opacity: 0.7;
+}
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center">Product Card</h2>
+<div id="sucPage" style="display: none;"> Sucess</div>
+<div id="failPage" style="display: none;"> Failed</div>
+<div id="orderPage" class="card">
+  <img src="http://pngimg.com/uploads/jeans/jeans_PNG5745.png" alt="Denim Jeans" style="width:100%">
+  <h1>Tailored Jeans</h1>
+  <p class="price">$19.99</p>
+  <p>Some text about the jeans. Super slim and comfy lorem ipsum lorem jeansum. Lorem jeamsun denim lorem jeansum.</p>
+  <p><button onclick="doPayment(100);">Proceed to pay</button></p>
+</div>
+
+</body>
+</html>
+ 
