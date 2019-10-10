@@ -42,4 +42,4 @@ app.post('/success', (req, res) => {
 
 
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen((process.env.ENV || 3000), () => console.log(`Example app listening on port ${(process.env.ENV || 3000)}!`))
